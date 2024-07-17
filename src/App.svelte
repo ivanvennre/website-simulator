@@ -23,13 +23,13 @@
   }
 </script>
 
-<main>
+<div class="simulator-wrapper">
   <Form on:update={handleUpdate} />
   <Chart data={formData} />
-</main>
+</div>
 
 <style>
-  main {
+  .simulator-wrapper {
     margin: 0 auto;
     display: flex;
     flex-direction: column;
