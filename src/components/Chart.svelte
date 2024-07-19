@@ -60,10 +60,11 @@
   function setOptions(data: ChartData[]) {
     let options = {
       tooltip: {
-        show: false,
+        show: true,
       },
       legend: {
-        show: false,
+        show: true,
+        bottom: 0,
       },
       xAxis: [
         {
@@ -85,10 +86,10 @@
       ],
       yAxis: [
         {
-          show: false,
+          show: true,
         },
         {
-          show: false,
+          show: true,
         },
       ],
       series: [
