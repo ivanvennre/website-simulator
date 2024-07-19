@@ -1,23 +1,44 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import {
+    calculatePassiveIncome,
+    riskLevels,
+    type ChartData,
+    type RiskLevels,
+  } from "../utils/calculations";
+  import Chart from "./Chart.svelte";
 
   const dispatch = createEventDispatcher();
 
+  export let chartData: ChartData[] = [];
+
   let initialInvestment: string = "";
-  let investmentPeriod: string = "";
+  let investmentPeriod: string = "2";
   let annualInvestment: string = "";
-  let riskLevel: string = "";
+  let riskLevel: string = "moderate";
   let targetAnnualPassiveIncome: string = "";
 
+  const riskLevelsKeys = Object.keys(riskLevels) as Array<keyof RiskLevels>;
+
   function handleInputChange() {
-    const formData = {
-      initialInvestment,
-      investmentPeriod,
-      annualInvestment,
-      riskLevel,
-      targetAnnualPassiveIncome,
-    };
-    dispatch("update", formData);
+    setTimeout(() => {
+      const formData = {
+        initialInvestment,
+        investmentPeriod,
+        annualInvestment,
+        riskLevel,
+      };
+      dispatch("update", formData);
+    }, 0);
+  }
+
+  $: {
+    const capitalCalls = chartData.map((data) => data.capitalCall);
+    const passiveIncome = calculatePassiveIncome(
+      capitalCalls,
+      riskLevels[riskLevel].percentageValue
+    );
+    targetAnnualPassiveIncome = passiveIncome.toFixed(2);
   }
 </script>
 
@@ -50,10 +71,8 @@
           bind:value={investmentPeriod}
           class="simulator-input-field select w-select"
         >
-          <option value="">Select one...</option>
-          <option value="First">First choice</option>
-          <option value="Second">Second choice</option>
-          <option value="Third">Third choice</option>
+          <option value="2">2 years</option>
+          <option value="5">5 years</option>
         </select>
       </div>
       <div class="simulator-form-input">
@@ -75,10 +94,9 @@
           bind:value={riskLevel}
           class="simulator-input-field select w-select"
         >
-          <option value="">Select one...</option>
-          <option value="First">First choice</option>
-          <option value="Second">Second choice</option>
-          <option value="Third">Third choice</option>
+          {#each riskLevelsKeys as level}
+            <option value={level}>{riskLevels[level].label}</option>
+          {/each}
         </select>
       </div>
     </div>

@@ -1,13 +1,14 @@
 <script lang="ts">
   import Form from "./components/Form.svelte";
   import Chart from "./components/Chart.svelte";
+  import { calculatePassiveIncome } from "./utils/calculations";
+  import type { ChartData } from "./utils/calculations";
 
   interface FormData {
     initialInvestment: string;
     investmentPeriod: string;
     annualInvestment: string;
     riskLevel: string;
-    targetAnnualPassiveIncome: string;
   }
 
   let formData: FormData = {
@@ -15,17 +16,22 @@
     investmentPeriod: "",
     annualInvestment: "",
     riskLevel: "",
-    targetAnnualPassiveIncome: "",
   };
+
+  let chartData: ChartData[] = [];
 
   function handleUpdate(event: CustomEvent<FormData>) {
     formData = event.detail;
   }
+
+  function setChartData(event: CustomEvent<FormData>) {
+    chartData = event.detail as unknown as ChartData[];
+  }
 </script>
 
 <div class="simulator-wrapper">
-  <Form on:update={handleUpdate} />
-  <Chart data={formData} />
+  <Form {chartData} on:update={handleUpdate} />
+  <Chart data={formData} on:chartFinished={setChartData} />
 </div>
 
 <style>

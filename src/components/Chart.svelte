@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import { Chart } from "svelte-echarts";
   import { init, use } from "echarts/core";
   import { BarChart } from "echarts/charts";
@@ -10,6 +11,10 @@
     LegendComponent,
   } from "echarts/components";
   import { CanvasRenderer } from "echarts/renderers";
+  import calculateChartData from "../utils/calculations";
+  import type { ChartDataArguments, ChartData } from "../utils/calculations";
+
+  const dispatch = createEventDispatcher();
 
   // Enable tree-shaking
   use([
@@ -27,125 +32,145 @@
     investmentPeriod: string;
     annualInvestment: string;
     riskLevel: string;
-    targetAnnualPassiveIncome: string;
   };
 
   // Example data, replace with your dynamic data as needed
-  let years = [
-    "31.12.2023",
-    "31.12.2024",
-    "31.12.2025",
-    "31.12.2026",
-    "31.12.2027",
-    "31.12.2028",
-  ];
-  let cumulativeCF = [
-    -63339.396120000005, -100551.2913405, -128420.62563329999,
-    -59063.98688189998, 28977.773724900035, 53046.744250500036,
-  ];
-  let totalReturns = [-63339.396120000005, -47504.54709, -47504.54709, 0, 0, 0];
-  let totalInvestments = [
-    0, 10292.651869500001, 19635.2127972, 69356.63875140001, 88041.76060680002,
-    24068.9705256,
-  ];
+  // let years = [
+  //   "Year 0",
+  //   "Year 1",
+  //   "Year 2",
+  //   "Year 3",
+  //   "Year 4",
+  //   "Year 5",
+  //   "Year 6",
+  //   "Year 7",
+  //   "Year 8",
+  //   "Year 9",
+  //   "Year 10",
+  // ];
+  // let cumulativeCF = [
+  //   -131954, -157894, -177817, -147741, -117665, -87589, -57513, -27437, 2639,
+  //   32715, 62791,
+  // ];
+  // let totalInvestments = [-150000, -50000, -50000, 0, 0, 0, 0, 0, 0, 0];
+  // let totalReturns = [
+  //   18046, 24061, 30076, 30076, 30076, 30076, 30076, 30076, 30076, 30076, 30076,
+  // ];
 
-  let options = {
-    tooltip: {
-      show: false,
-    },
-    legend: {
-      show: false,
-    },
-    xAxis: [
-      {
-        type: "category",
-        data: years.map((year) => year.slice(-4)),
-        axisPointer: {
-          type: "shadow",
-          label: {
+  function setOptions(data: ChartData[]) {
+    let options = {
+      tooltip: {
+        show: false,
+      },
+      legend: {
+        show: false,
+      },
+      xAxis: [
+        {
+          type: "category",
+          data: data.map((item) => item.year),
+          axisPointer: {
+            type: "shadow",
+            label: {
+              show: false,
+            },
+          },
+          axisLine: {
+            show: false,
+          },
+          axisTick: {
             show: false,
           },
         },
-        axisLine: {
+      ],
+      yAxis: [
+        {
           show: false,
         },
-        axisTick: {
+        {
           show: false,
         },
-      },
-    ],
-    yAxis: [
-      {
-        show: false,
-      },
-      {
-        show: false,
-      },
-    ],
-    series: [
-      {
-        name: "Cumulative Cash Flow",
-        type: "line",
-        yAxisIndex: 0,
-        data: cumulativeCF,
-        symbol: "none",
-        lineStyle: {
-          width: 3,
-          color: "#CCCCCC",
+      ],
+      series: [
+        {
+          name: "Cumulative Cash Flow",
+          type: "line",
+          yAxisIndex: 0,
+          data: data.map((item) => item.cumulativeCashFlow),
+          symbol: "none",
+          lineStyle: {
+            width: 3,
+            color: "#CCCCCC",
+          },
+          smooth: true,
+          itemStyle: {
+            color: "#CCCCCC",
+          },
+          label: {
+            show: false,
+          },
+          animation: true,
+          animationDuration: 1500,
+          animationEasing: "exponentialInOut",
+          z: 1,
         },
-        smooth: true,
-        itemStyle: {
-          color: "#CCCCCC",
+        {
+          name: "Total Investments",
+          type: "bar",
+          data: data.map((item) => item.capitalCall),
+          itemStyle: {
+            color: "#7ED00A",
+            borderRadius: 4,
+          },
+          label: {
+            show: false,
+          },
+          animation: true,
+          animationDuration: 1500,
+          animationEasing: "exponentialInOut",
+          z: 2,
         },
-        label: {
-          show: false,
+        {
+          name: "Total Returns",
+          type: "bar",
+          data: data.map((item) => item.capitalDistribution),
+          itemStyle: {
+            color: "#800080",
+            borderRadius: 4,
+          },
+          label: {
+            show: false,
+          },
+          animation: true,
+          animationDuration: 1500,
+          animationEasing: "exponentialInOut",
+          z: 2,
         },
-        animation: true,
-        animationDuration: 1500,
-        animationEasing: "exponentialInOut",
-        z: 1,
-      },
-      {
-        name: "Total Investments",
-        type: "bar",
-        data: totalInvestments,
-        itemStyle: {
-          color: "#800080", // Purple color
-          borderRadius: 4,
-        },
-        label: {
-          show: false,
-        },
-        animation: true,
-        animationDuration: 1500,
-        animationEasing: "exponentialInOut",
-        z: 2,
-      },
-      {
-        name: "Total Returns",
-        type: "bar",
-        data: totalReturns,
-        itemStyle: {
-          color: "#7ED00A", // Green color
-          borderRadius: 4,
-        },
-        label: {
-          show: false,
-        },
-        animation: true,
-        animationDuration: 1500,
-        animationEasing: "exponentialInOut",
-        z: 2,
-      },
-    ],
-  };
+      ],
+    };
+    return options;
+  }
 
-  // Update options data dynamically based on input data
-  // $: options.series[0].data = [
-  //   parseFloat(data.initialInvestment) || 0,
-  //   parseFloat(data.annualInvestment) || 0,
-  //   parseFloat(data.targetAnnualPassiveIncome) || 0,
-  // ];
+  let options = setOptions([]);
+
+  $: {
+    if (
+      data.annualInvestment &&
+      data.initialInvestment &&
+      data.investmentPeriod &&
+      data.riskLevel
+    ) {
+      const chartDataProps: ChartDataArguments = {
+        initialInvestment: parseFloat(data.initialInvestment) || 0,
+        investmentPeriod: parseFloat(data.investmentPeriod) || 0,
+        annualInvestment: parseFloat(data.annualInvestment) || 0,
+        riskLevel: data.riskLevel,
+      };
+      const chartData = calculateChartData(chartDataProps);
+      options = setOptions(chartData);
+      dispatch("chartFinished", chartData);
+    }
+  }
 </script>
 
 <div class="chart-container">
