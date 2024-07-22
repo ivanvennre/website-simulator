@@ -6,21 +6,66 @@
     type ChartData,
     type RiskLevels,
   } from "../utils/calculations";
-  import Chart from "./Chart.svelte";
 
   const dispatch = createEventDispatcher();
 
   export let chartData: ChartData[] = [];
 
-  let initialInvestment: string = "";
+  let initialInvestment: number | null = null;
   let investmentPeriod: string = "2";
-  let annualInvestment: string = "";
-  let riskLevel: string = "moderate";
-  let targetAnnualPassiveIncome: string = "";
+  let annualInvestment: number | null = null;
+  let riskLevel: keyof RiskLevels = "moderate";
+  let targetAnnualPassiveIncome: number | null = null;
+
+  let passiveIncomeTargetAchieved: boolean | null = null;
 
   const riskLevelsKeys = Object.keys(riskLevels) as Array<keyof RiskLevels>;
 
-  function handleInputChange() {
+  function formatCurrency(value: number | null): string {
+    if (value === null) return "";
+    return value.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+  }
+
+  function parseCurrency(value: string): number | null {
+    const parsed = parseFloat(value.replace(/[$,]/g, ""));
+    return isNaN(parsed) ? null : parsed;
+  }
+
+  function handleInputChange(event: Event, field: string) {
+    const target = event.target as HTMLInputElement;
+    const parsedValue = parseCurrency(target.value);
+
+    switch (field) {
+      case "initialInvestment":
+        initialInvestment = parsedValue;
+        break;
+      case "annualInvestment":
+        annualInvestment = parsedValue;
+        break;
+      case "targetAnnualPassiveIncome":
+        targetAnnualPassiveIncome = parsedValue;
+        break;
+    }
+
+    target.value = parsedValue !== null ? formatCurrency(parsedValue) : "";
+
+    setTimeout(() => {
+      const formData = {
+        initialInvestment,
+        investmentPeriod,
+        annualInvestment,
+        riskLevel,
+      };
+      dispatch("update", formData);
+    }, 0);
+  }
+
+  function handleSelectChange() {
     setTimeout(() => {
       const formData = {
         initialInvestment,
@@ -33,12 +78,17 @@
   }
 
   $: {
-    const capitalCalls = chartData.map((data) => data.capitalCall);
-    const passiveIncome = calculatePassiveIncome(
-      capitalCalls,
-      riskLevels[riskLevel].percentageValue
-    );
-    targetAnnualPassiveIncome = passiveIncome.toFixed(2);
+    if (targetAnnualPassiveIncome === null) {
+      passiveIncomeTargetAchieved = null;
+    } else {
+      const capitalCalls = chartData.map((data) => data.capitalCall);
+      const calculatedPassiveIncome = calculatePassiveIncome(
+        capitalCalls,
+        riskLevels[riskLevel].percentageValue
+      );
+      passiveIncomeTargetAchieved =
+        calculatedPassiveIncome >= targetAnnualPassiveIncome;
+    }
   }
 </script>
 
@@ -46,9 +96,40 @@
   <h4 class="simulator-main-title">Title placeholder</h4>
   <h5 class="simulator-subtitle">Subtitle placeholder goes here in USD</h5>
 </div>
+<div class="simulator-info-banner">
+  <div class="simulator-info-banner-title">
+    <svg
+      width="10"
+      height="14"
+      viewBox="0 0 10 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M4.99997 0.279297V5.26435H9.56104L4.99997 13.7205V8.73546H0.438477L4.99997 0.279297Z"
+        fill="black"
+      />
+    </svg>
+    Our calculator can help you:
+  </div>
+  <ul role="list" class="simulator-info-banner-list">
+    <li>
+      See the potential value of an investment by the time you stop investing
+    </li>
+    <li>
+      Understand how the value of an investment could change with different
+      levels of risk
+    </li>
+    <li>
+      Budget how much you should invest to reach your target passive income
+    </li>
+  </ul>
+</div>
 <div class="simulator-divider"></div>
 <div class="simulator-form-block w-form">
-  <form class="simulator-form" on:input={handleInputChange}>
+  <form class="simulator-form">
     <div class="simulator-form-row">
       <div class="simulator-form-input">
         <label for="initial-investment" class="simulator-input-label"
@@ -57,8 +138,11 @@
         <input
           class="simulator-input-field w-input"
           id="initial-investment"
-          bind:value={initialInvestment}
-          placeholder="ex. 10,000"
+          value={initialInvestment !== null
+            ? formatCurrency(initialInvestment)
+            : ""}
+          on:input={(e) => handleInputChange(e, "initialInvestment")}
+          placeholder="$10,000"
           type="text"
         />
       </div>
@@ -69,6 +153,7 @@
         <select
           id="investment-period"
           bind:value={investmentPeriod}
+          on:change={handleSelectChange}
           class="simulator-input-field select w-select"
         >
           <option value="2">2 years</option>
@@ -82,8 +167,11 @@
         <input
           class="simulator-input-field w-input"
           id="annual-investment"
-          bind:value={annualInvestment}
-          placeholder="ex. 100,000"
+          value={annualInvestment !== null
+            ? formatCurrency(annualInvestment)
+            : ""}
+          on:input={(e) => handleInputChange(e, "annualInvestment")}
+          placeholder="$100,000"
           type="text"
         />
       </div>
@@ -92,6 +180,7 @@
         <select
           id="risk-level"
           bind:value={riskLevel}
+          on:change={handleSelectChange}
           class="simulator-input-field select w-select"
         >
           {#each riskLevelsKeys as level}
@@ -108,10 +197,58 @@
         <input
           class="simulator-input-field w-input"
           id="target-annual-passive-income"
-          bind:value={targetAnnualPassiveIncome}
+          value={targetAnnualPassiveIncome !== null
+            ? formatCurrency(targetAnnualPassiveIncome)
+            : ""}
+          on:input={(e) => handleInputChange(e, "targetAnnualPassiveIncome")}
+          placeholder="$10,000"
           type="text"
         />
       </div>
     </div>
+    {#if passiveIncomeTargetAchieved === true}
+      <div class="simulator-info-banner success">
+        <div class="simulator-info-banner-title success">
+          <svg
+            width="12"
+            height="10"
+            viewBox="0 0 12 10"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 4.6L4.54839 9L11 1"
+              stroke="#74BA11"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          Achievable target
+        </div>
+      </div>
+    {:else if passiveIncomeTargetAchieved === false}
+      <div class="simulator-info-banner danger">
+        <div class="simulator-info-banner-title danger">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0.669039 1.45645C0.151742 0.939154 0.939154 0.15429 1.45645 0.669039L6 5.21259L10.5435 0.669039C11.0608 0.151742 11.8483 0.939154 11.331 1.45645L6.78741 6L11.331 10.5435C11.8483 11.0608 11.0608 11.8483 10.5435 11.331L6 6.78741L1.45645 11.331C0.939154 11.8483 0.151742 11.0608 0.669039 10.5435L5.21259 6L0.669039 1.45645Z"
+              fill="#F26529"
+            />
+          </svg>
+          Target slightly out of reach...
+        </div>
+        <div class="simulator-info-banner-text">
+          To reach your target annual passive income, you'll either need to
+          increase your total investments or investment period
+        </div>
+      </div>
+    {/if}
   </form>
 </div>

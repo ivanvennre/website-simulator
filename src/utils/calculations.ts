@@ -14,7 +14,7 @@ export interface ChartDataArguments {
   initialInvestment: number;
   investmentPeriod: number;
   annualInvestment: number;
-  riskLevel: string;
+  riskLevel: keyof RiskLevels;
 }
 
 export interface ChartData {
@@ -44,7 +44,7 @@ export const riskLevels: RiskLevels = {
   },
 };
 
-const numberOfYears = 11;
+const numberOfYears = 10;
 
 export default function calculateChartData({
   initialInvestment,
@@ -75,7 +75,7 @@ export default function calculateChartData({
     );
 
     return {
-      year: `Year ${i}`,
+      year: `${i + 1}y`,
       capitalCall,
       capitalDistribution,
       netCashFlow,

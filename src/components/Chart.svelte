@@ -2,8 +2,7 @@
   import { createEventDispatcher } from "svelte";
   import { Chart } from "svelte-echarts";
   import { init, use } from "echarts/core";
-  import { BarChart } from "echarts/charts";
-  import { LineChart } from "echarts/charts";
+  import { BarChart, LineChart } from "echarts/charts";
   import {
     GridComponent,
     TitleComponent,
@@ -12,11 +11,14 @@
   } from "echarts/components";
   import { CanvasRenderer } from "echarts/renderers";
   import calculateChartData from "../utils/calculations";
-  import type { ChartDataArguments, ChartData } from "../utils/calculations";
+  import type {
+    ChartDataArguments,
+    ChartData,
+    RiskLevels,
+  } from "../utils/calculations";
 
   const dispatch = createEventDispatcher();
 
-  // Enable tree-shaking
   use([
     BarChart,
     LineChart,
@@ -31,40 +33,30 @@
     initialInvestment: string;
     investmentPeriod: string;
     annualInvestment: string;
-    riskLevel: string;
+    riskLevel: keyof RiskLevels;
   };
-
-  // Example data, replace with your dynamic data as needed
-  // let years = [
-  //   "Year 0",
-  //   "Year 1",
-  //   "Year 2",
-  //   "Year 3",
-  //   "Year 4",
-  //   "Year 5",
-  //   "Year 6",
-  //   "Year 7",
-  //   "Year 8",
-  //   "Year 9",
-  //   "Year 10",
-  // ];
-  // let cumulativeCF = [
-  //   -131954, -157894, -177817, -147741, -117665, -87589, -57513, -27437, 2639,
-  //   32715, 62791,
-  // ];
-  // let totalInvestments = [-150000, -50000, -50000, 0, 0, 0, 0, 0, 0, 0];
-  // let totalReturns = [
-  //   18046, 24061, 30076, 30076, 30076, 30076, 30076, 30076, 30076, 30076, 30076,
-  // ];
 
   function setOptions(data: ChartData[]) {
     let options = {
       tooltip: {
         show: true,
       },
+      title: {
+        text: "Years since initial investment",
+        left: "center",
+        bottom: 40,
+        textStyle: {
+          color: "#000",
+          fontWeight: "normal",
+          fontSize: 15,
+        },
+      },
       legend: {
         show: true,
         bottom: 0,
+      },
+      grid: {
+        bottom: 125, // Adjusted bottom padding to create space for title and legend
       },
       xAxis: [
         {
@@ -94,6 +86,38 @@
       ],
       series: [
         {
+          name: "Total Investments",
+          type: "bar",
+          data: data.map((item) => item.capitalCall),
+          itemStyle: {
+            color: "#8B9CE9",
+            borderRadius: 4,
+          },
+          label: {
+            show: false,
+          },
+          animation: true,
+          animationDuration: 1500,
+          animationEasing: "exponentialInOut",
+          z: 2,
+        },
+        {
+          name: "Total Returns",
+          type: "bar",
+          data: data.map((item) => item.capitalDistribution),
+          itemStyle: {
+            color: "#74BA11",
+            borderRadius: 4,
+          },
+          label: {
+            show: false,
+          },
+          animation: true,
+          animationDuration: 1500,
+          animationEasing: "exponentialInOut",
+          z: 2,
+        },
+        {
           name: "Cumulative Cash Flow",
           type: "line",
           yAxisIndex: 0,
@@ -115,44 +139,12 @@
           animationEasing: "exponentialInOut",
           z: 1,
         },
-        {
-          name: "Total Investments",
-          type: "bar",
-          data: data.map((item) => item.capitalCall),
-          itemStyle: {
-            color: "#7ED00A",
-            borderRadius: 4,
-          },
-          label: {
-            show: false,
-          },
-          animation: true,
-          animationDuration: 1500,
-          animationEasing: "exponentialInOut",
-          z: 2,
-        },
-        {
-          name: "Total Returns",
-          type: "bar",
-          data: data.map((item) => item.capitalDistribution),
-          itemStyle: {
-            color: "#800080",
-            borderRadius: 4,
-          },
-          label: {
-            show: false,
-          },
-          animation: true,
-          animationDuration: 1500,
-          animationEasing: "exponentialInOut",
-          z: 2,
-        },
       ],
     };
     return options;
   }
 
-  let options = setOptions([]);
+  let options: any = null;
 
   $: {
     if (
@@ -175,12 +167,14 @@
 </script>
 
 <div class="chart-container">
-  <Chart {init} {options} />
+  {#if options}
+    <Chart {init} {options} />
+  {/if}
 </div>
 
 <style>
   .chart-container {
     width: 100%;
-    height: 400px;
+    height: 500px;
   }
 </style>

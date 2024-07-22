@@ -2,20 +2,20 @@
   import Form from "./components/Form.svelte";
   import Chart from "./components/Chart.svelte";
   import { calculatePassiveIncome } from "./utils/calculations";
-  import type { ChartData } from "./utils/calculations";
+  import type { ChartData, RiskLevels } from "./utils/calculations";
 
   interface FormData {
     initialInvestment: string;
     investmentPeriod: string;
     annualInvestment: string;
-    riskLevel: string;
+    riskLevel: keyof RiskLevels;
   }
 
   let formData: FormData = {
     initialInvestment: "",
     investmentPeriod: "",
     annualInvestment: "",
-    riskLevel: "",
+    riskLevel: "moderate",
   };
 
   let chartData: ChartData[] = [];
