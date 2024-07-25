@@ -30,8 +30,10 @@
 </script>
 
 <div class="simulator-wrapper">
-  <Form {chartData} on:update={handleUpdate} />
-  <Chart data={formData} on:chartFinished={setChartData} />
+  <div class="simulator-split">
+    <Form {chartData} on:update={handleUpdate} />
+    <Chart data={formData} on:chartFinished={setChartData} />
+  </div>
 </div>
 
 <style>
@@ -40,6 +42,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 768px;
+    max-width: 1440px;
   }
 </style>
