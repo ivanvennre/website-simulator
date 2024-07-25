@@ -30,6 +30,10 @@
 </script>
 
 <div class="simulator-wrapper">
+  <div class="simulator-titles">
+    <h4 class="simulator-main-title">Title placeholder</h4>
+    <h5 class="simulator-subtitle">Subtitle placeholder goes here in USD</h5>
+  </div>
   <div class="simulator-split">
     <Form {chartData} on:update={handleUpdate} />
     <Chart data={formData} on:chartFinished={setChartData} />
@@ -41,7 +45,7 @@
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     max-width: 1440px;
   }
 </style>

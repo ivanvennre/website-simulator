@@ -3493,12 +3493,13 @@ a {
   flex-flow: column;
   justify-content: flex-start;
   align-items: stretch;
+  margin-top: 100px;
   padding: 40px;
   display: flex;
 }
 
 .simulator-wrapper.placeholder {
-  margin-top: 100px;
+  display: none;
 }
 
 .simulator-titles {
@@ -3569,7 +3570,6 @@ a {
   flex-flow: column;
   justify-content: center;
   align-items: center;
-  margin-top: 40px;
   display: flex;
 }
 
@@ -3637,6 +3637,8 @@ a {
   grid-template-rows: auto;
   grid-template-columns: 1fr 1fr;
   grid-auto-columns: 1fr;
+  align-items: start;
+  justify-items: center;
   display: grid;
 }
 

@@ -36,10 +36,25 @@
     riskLevel: keyof RiskLevels;
   };
 
+  function formatValue(value: number) {
+    if (Math.abs(value) >= 1000) {
+      return value < 0
+        ? `($${Math.abs(value / 1000).toFixed(0)}k)`
+        : `$${(value / 1000).toFixed(0)}k`;
+    }
+    return value < 0
+      ? `($${Math.abs(value).toFixed(0)})`
+      : `$${value.toFixed(0)}`;
+  }
+
   function setOptions(data: ChartData[]) {
     let options = {
       tooltip: {
         show: true,
+        formatter: (params: { value: any; seriesName: any }) => {
+          let value = params.value;
+          return `${params.seriesName}: ${formatValue(value)}`;
+        },
       },
       title: {
         text: "Years since initial investment",
@@ -79,9 +94,15 @@
       yAxis: [
         {
           show: true,
+          axisLabel: {
+            formatter: formatValue,
+          },
         },
         {
           show: true,
+          axisLabel: {
+            formatter: formatValue,
+          },
         },
       ],
       series: [
@@ -166,15 +187,15 @@
   }
 </script>
 
-<div class="chart-container">
+<div class="simulator-chart-wrapper">
   {#if options}
     <Chart {init} {options} />
   {/if}
 </div>
 
 <style>
-  .chart-container {
+  .simulator-chart-wrapper {
     width: 100%;
-    height: 500px;
+    height: 100%;
   }
 </style>
