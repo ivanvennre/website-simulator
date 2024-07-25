@@ -3549,10 +3549,15 @@ a {
 }
 
 .simulator-input-label {
+  grid-column-gap: 4px;
+  grid-row-gap: 4px;
   color: #4d4d4f;
+  justify-content: flex-start;
+  align-items: center;
   font-size: 12px;
   font-weight: 400;
   line-height: 24px;
+  display: flex;
 }
 
 .simulator-input-field {
@@ -3570,6 +3575,9 @@ a {
   flex-flow: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
   display: flex;
 }
 
@@ -3633,13 +3641,16 @@ a {
 
 .simulator-split {
   grid-column-gap: 90px;
-  grid-row-gap: 50px;
   grid-template-rows: auto;
   grid-template-columns: 1fr 1fr;
   grid-auto-columns: 1fr;
   align-items: start;
   justify-items: center;
   display: grid;
+}
+
+.simulator-form-wrapper {
+  width: 100%;
 }
 
 @media screen and (max-width: 991px) {
@@ -3807,6 +3818,8 @@ a {
 
   .simulator-split {
     grid-template-columns: 1fr;
+    align-items: center;
+    justify-items: start;
   }
 }
 

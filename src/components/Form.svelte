@@ -6,6 +6,7 @@
     type ChartData,
     type RiskLevels,
   } from "../utils/calculations";
+  import InfoIcon from "./InfoIcon.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -92,7 +93,10 @@
   }
 </script>
 
-<div id="w-node-_7a4ce190-b09e-8b65-d8ba-02f9fee9f057-958bf92d">
+<div
+  id="w-node-_7a4ce190-b09e-8b65-d8ba-02f9fee9f057-958bf92d"
+  class="simulator-form-wrapper"
+>
   <div class="simulator-info-banner">
     <div class="simulator-info-banner-title">
       <svg
@@ -138,8 +142,11 @@
           class="simulator-form-input"
         >
           <label for="initial-investment" class="simulator-input-label"
-            >Initial Investment</label
-          >
+            >Initial Investment
+            <InfoIcon
+              message="How much would you like to start investing in?"
+            />
+          </label>
           <input
             class="simulator-input-field w-input"
             id="initial-investment"
@@ -156,7 +163,9 @@
           class="simulator-form-input"
         >
           <label for="investment-period" class="simulator-input-label"
-            >Investment Period</label
+            >Investment Period<InfoIcon
+              message="How many years would you like to invest for?"
+            /></label
           >
           <select
             id="investment-period"
@@ -178,7 +187,9 @@
           class="simulator-form-input"
         >
           <label for="annual-investment" class="simulator-input-label"
-            >Annual Investment</label
+            >Annual Investment<InfoIcon
+              message="How much money could you invest each year?"
+            /></label
           >
           <input
             class="simulator-input-field w-input"
@@ -196,7 +207,9 @@
           class="simulator-form-input"
         >
           <label for="risk-level" class="simulator-input-label"
-            >Risk Level</label
+            >Risk Level<InfoIcon
+              message="How comfortable are you with taking risks?"
+            /></label
           >
           <select
             id="risk-level"
@@ -217,7 +230,10 @@
         >
           <label
             for="target-annual-passive-income"
-            class="simulator-input-label">Target Annual Passive Income</label
+            class="simulator-input-label"
+            >Target Annual Passive Income<InfoIcon
+              message="How much annual income do you want your investments to generate after the investment period?"
+            /></label
           >
           <input
             class="simulator-input-field w-input"
