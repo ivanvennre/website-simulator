@@ -50,10 +50,12 @@
   function setOptions(data: ChartData[]) {
     let options = {
       tooltip: {
-        show: true,
-        formatter: (params: { value: any; seriesName: any }) => {
-          let value = params.value;
-          return `${params.seriesName}: ${formatValue(value)}`;
+        trigger: "item",
+        formatter: (params: any) => {
+          if (params.seriesName === "Cumulative Cash Flow") {
+            return `${params.seriesName}: ${formatValue(params.value)}`;
+          }
+          return `${params.seriesName}: ${formatValue(params.value)}`;
         },
       },
       title: {
@@ -143,7 +145,8 @@
           type: "line",
           yAxisIndex: 0,
           data: data.map((item) => item.cumulativeCashFlow),
-          symbol: "none",
+          symbol: "circle",
+          symbolSize: 8,
           lineStyle: {
             width: 3,
             color: "#CCCCCC",
