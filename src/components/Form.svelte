@@ -11,9 +11,9 @@
 
   export let chartData: ChartData[] = [];
 
-  let initialInvestment: number | null = null;
-  let investmentPeriod: string = "2";
-  let annualInvestment: number | null = null;
+  let initialInvestment: number | null = 100000;
+  let investmentPeriod: string = "3";
+  let annualInvestment: number | null = 50000;
   let riskLevel: keyof RiskLevels = "moderate";
   let targetAnnualPassiveIncome: number | null = null;
 
@@ -164,8 +164,13 @@
             on:change={handleSelectChange}
             class="simulator-input-field select w-select"
           >
+            <option value="1">1 year</option>
             <option value="2">2 years</option>
+            <option value="3">3 years</option>
+            <option value="4">4 years</option>
             <option value="5">5 years</option>
+            <option value="6">6 years</option>
+            <option value="7">7 years</option>
           </select>
         </div>
         <div

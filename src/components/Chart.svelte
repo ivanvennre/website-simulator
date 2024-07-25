@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { Chart } from "svelte-echarts";
   import { init, use } from "echarts/core";
   import { BarChart, LineChart } from "echarts/charts";
@@ -167,22 +167,29 @@
 
   let options: any = null;
 
+  function initializeChart() {
+    const chartDataProps: ChartDataArguments = {
+      initialInvestment: parseFloat(data.initialInvestment) || 0,
+      investmentPeriod: parseFloat(data.investmentPeriod) || 0,
+      annualInvestment: parseFloat(data.annualInvestment) || 0,
+      riskLevel: data.riskLevel,
+    };
+    const chartData = calculateChartData(chartDataProps);
+    options = setOptions(chartData);
+    dispatch("chartFinished", chartData);
+  }
+
+  onMount(() => {
+    initializeChart();
+  });
+
   $: {
     if (
-      data.annualInvestment &&
-      data.initialInvestment &&
+      (data.annualInvestment || data.initialInvestment) &&
       data.investmentPeriod &&
       data.riskLevel
     ) {
-      const chartDataProps: ChartDataArguments = {
-        initialInvestment: parseFloat(data.initialInvestment) || 0,
-        investmentPeriod: parseFloat(data.investmentPeriod) || 0,
-        annualInvestment: parseFloat(data.annualInvestment) || 0,
-        riskLevel: data.riskLevel,
-      };
-      const chartData = calculateChartData(chartDataProps);
-      options = setOptions(chartData);
-      dispatch("chartFinished", chartData);
+      initializeChart();
     }
   }
 </script>

@@ -12,9 +12,9 @@
   }
 
   let formData: FormData = {
-    initialInvestment: "",
-    investmentPeriod: "",
-    annualInvestment: "",
+    initialInvestment: "100000",
+    investmentPeriod: "3",
+    annualInvestment: "50000",
     riskLevel: "moderate",
   };
 
