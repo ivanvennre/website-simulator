@@ -1,4 +1,5 @@
 <script lang="ts">
+  export let tooltipWidth = "200px";
   export let width: number = 12;
   export let height: number = 12;
   export let message: string = "How much would you like to start investing in?";
@@ -19,7 +20,7 @@
       fill="#001560"
     />
   </svg>
-  <div class="tooltip">{message}</div>
+  <div class="tooltip" style="width: {tooltipWidth}">{@html message}</div>
 </div>
 
 <style>
@@ -31,12 +32,11 @@
 
   .tooltip {
     visibility: hidden;
-    width: 200px;
     background-color: #333;
     color: #fff;
     text-align: center;
     border-radius: 6px;
-    padding: 8px;
+    padding: 12px;
     position: absolute;
     z-index: 1;
     bottom: 125%; /* Position above the icon */
@@ -46,6 +46,7 @@
     transition: opacity 0.3s;
     font-size: 12px;
     line-height: 1.5;
+    text-align: left;
   }
 
   .tooltip::after {

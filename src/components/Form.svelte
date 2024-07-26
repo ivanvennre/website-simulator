@@ -208,7 +208,16 @@
         >
           <label for="risk-level" class="simulator-input-label"
             >Risk Level<InfoIcon
-              message="How comfortable are you with taking risks?"
+              message={`
+              <p style="margin-bottom: 8px;">Tell us how you feel about risk by selecting one of the options:</p>
+              <ul style="padding-left:20px;">
+                <li style="margin-bottom:4px;"><strong>Low</strong> - you're generally comfortable with achieving a low level of potential return on your investment coupled with a low level risk of investment loss.</li>
+                <li style="margin-bottom:4px;"><strong>Moderate</strong> - you're generally comfortable with achieving a moderate level of potential return on your investment coupled with a moderate risk of investment loss.</li>
+                <li style="margin-bottom:4px;"><strong>High</strong> - you're generally comfortable with achieving a high level of potential return on your investment coupled with high risk of investment loss.</li>
+                <li><strong>Aggressive</strong> - you're generally comfortable with achieving a very high level of potential return on investment coupled with very high risk of investment loss.</li>
+              </ul>
+              `}
+              tooltipWidth="600px"
             /></label
           >
           <select
